@@ -1,0 +1,63 @@
+System WebSystem = {
+
+    Component Client  = {
+        Port sendHttpRequestPort  = {
+        
+        }
+
+    }
+    Component WebServer  = {
+        Port receiveHttpRequestPort  = {
+
+        }
+        Port sendSQLRequestPort  = {
+
+        }
+
+        Property ServiceIP : string = "172.17.0.1";
+
+        Property ServicePort : string = "80";
+
+        Property HAParams = {[ServiceCategory = "stateless";],[Mode = "active/active";],[Size = "2";]};
+        
+    }
+    Component MySQL  = {
+        Port receiveSQLRequestPort  = {
+
+        }
+
+        Property ServiceIP : string = "172.17.0.10";
+
+        Property ServicePort : string = "3306";
+
+        Property HAParams = {[ServiceCategory = "stateful";],[Mode = "active/passive";],[Size = "2";]};
+
+    }
+    Connector Http_Connector  = {
+        Role requestor  = {
+
+        }
+        Role requestee  = {
+
+        }
+
+        Property implementation : string = "HTTP Protocol";
+
+    }
+    Connector SQL_Connector  = {
+        Role requestor  = {
+
+        }
+        Role requestee  = {
+
+        }
+
+        Property implementation : string = "SQL Query Link";
+
+    }
+    Attachment Client.sendHttpRequestPort to Http_Connector.requestor;
+    Attachment WebServer.receiveHttpRequestPort to Http_Connector.requestee;
+    Attachment WebServer.sendSQLRequestPort to SQL_Connector.requestor;
+    Attachment MySQL.receiveSQLRequestPort to SQL_Connector.requestee;
+}
+
